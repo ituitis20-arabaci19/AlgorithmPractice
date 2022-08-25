@@ -1,26 +1,30 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
 public:
-    string reverseWords(string s) {
-        vector<int> emptyIdx = {-1};
-        for(int i=0; i<s.size(); i++)
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* ptr = head;
+        ListNode* dummy = new ListNode();
+        dummy->next = head;
+        ListNode* rmNode = dummy;
+        while(ptr->next != nullptr)
         {
-            if(s[i] == ' ')
-                emptyIdx.push_back(i);
+            ptr = ptr->next;
+            if(n <= 1)
+                rmNode = rmNode->next;
+            n--;
         }
-        emptyIdx.push_back(s.size());
-        for(int i=0; i<emptyIdx.size()-1; i++)
-        {
-            int left = emptyIdx[i]+1;
-            int right = emptyIdx[i+1]-1;
-            while(left < right)
-            {
-                char temp = s[left];
-                s[left] = s[right];
-                s[right] = temp;
-                left++;
-                right--;
-            }
-        }
-        return s;
+        rmNode->next = rmNode->next->next; 
+        if(rmNode == dummy)
+            return rmNode->next;
+        return head;
     }
 };
