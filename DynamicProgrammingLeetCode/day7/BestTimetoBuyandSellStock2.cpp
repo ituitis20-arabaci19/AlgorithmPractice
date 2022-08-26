@@ -7,21 +7,37 @@ using namespace std;
 class Solution {
 public:
     int maxProfit(vector<int>& prices) {
-        int pricesSize = prices.size();
-        int mostExp = prices[pricesSize-1], potentialBuy = prices[pricesSize-1];
-        int maxProfit = 0;
-        for(int i=pricesSize-2; i>=0; i--)
+        bool sell = true;
+        int profit = 0, lastBuy = prices[0], lastSold = prices[0];
+        for(int i=1; i<prices.size(); i++)
         {
-            if(prices[i] > mostExp)
+            int price = prices[i];
+            if(sell)
             {
-                maxProfit = max(maxProfit, mostExp - potentialBuy);
-                mostExp = prices[i];
-                potentialBuy = prices[i];
+                if(price <= lastBuy)
+                    lastBuy = price;
+                else
+                {
+                    lastSold = price;
+                    profit += lastSold-lastBuy;
+                    sell = false;
+                }
             }
-            if(prices[i] < potentialBuy)
-                potentialBuy = prices[i];
+            else
+            {
+                if(price > lastSold)
+                {
+                    profit += price-lastSold;
+                    lastSold = price;
+                }
+                else
+                {
+                    lastBuy = price;
+                    sell = true;
+                }
+            }
         }
-        return max(maxProfit, mostExp - potentialBuy);
+        return profit;
     }
 };
 
