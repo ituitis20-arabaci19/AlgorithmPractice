@@ -6,9 +6,9 @@
 using namespace std;
 class Solution {
 public:
-    int maxProfit(vector<int>& prices) {
+    int maxProfit(vector<int> prices) {
         bool sell = true;
-        int profit = 0, lastBuy = prices[0], lastSold = prices[0];
+        int profit = 0, lastBuy = prices[0], lastSold = INT_MIN;
         for(int i=1; i<prices.size(); i++)
         {
             int price = prices[i];
@@ -18,32 +18,25 @@ public:
                     lastBuy = price;
                 else
                 {
-                    if(price > prices[i+1])
+                    if(i == prices.size()-1)
                     {
-                        if(abs(prices[i-1]-price) > abs(prices[i+1]-prices[i+2]))
-                        {
-                            lastSold = price;
-                            i++;
-                        }
-                        else
-                            lastSold = prices[i-1];
-                        profit += lastSold-lastBuy;
-                        sell = false;
+                        lastSold = max(lastSold, price);
+                        profit += max(0,lastSold-lastBuy);
+                    }
+                    else if(price > prices[i+1])
+                    {
+                        int curr = maxProfit(vector<int>(prices.begin()+i+1,prices.end()));
+                        int next = maxProfit(vector<int>(prices.begin()+i+2,prices.end()));
+                        profit += max(curr+prices[i-1]-lastBuy, next+price-lastBuy);
+                        break;
                     }
                 }
             }
             else
             {
-                if(price > lastSold)
-                {
-                    profit += price-lastSold;
-                    lastSold = price;
-                }
-                else
-                {
-                    lastBuy = price;
-                    sell = true;
-                }
+                lastBuy = price;
+                sell = true;
+                lastSold = INT_MIN;
             }
         }
         return profit;
